@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <algorithm>
 #include "Nodo.h"
 #include "Arista.h"
 using namespace std;
@@ -21,16 +22,19 @@ class grafo{
     }
     
 void bellmanFord(int sourceID, int destinationID, int peso) {
-        vector<int> distance(nodes.size(), 1000000);
+        vector<double> distance(nodes.size(), numeric_limits<double>:: infinity());
         distance[sourceID] = 0;
+        int tamanored = nodes.size();
+        vector<int> anterior(tamanored,-1);
+        
 
         for (int i = 0; i < nodes.size() - 1; ++i) {
             for (node* currentNode : nodes) {
                 for (Arista& road : currentNode->getRoads()) {
-
-                    int newDistance = distance[currentNode->getID()] + road.gettime();
-                    if (newDistance < distance[road.getconex()]) {
-                        distance[road.getconex()] = newDistance;
+                    double tiempoArista = calctime(peso, road.getspeed()) * road.gettime();
+                    if (distance[currentNode->getID()] != numeric_limits<double>::infinity() && distance[currentNode->getID()] + tiempoArista< distance[road.getconex()])  {
+                        distance[road.getconex()] = distance[currentNode->getID()] +tiempoArista;
+                        anterior[road.getconex()] = currentNode->getID();
                     }
                 }
             }
@@ -39,8 +43,8 @@ void bellmanFord(int sourceID, int destinationID, int peso) {
         // Verificar ciclos negativos
         for (node* currentNode : nodes) {
             for (Arista& road : currentNode->getRoads()) {
-                int newDistance = distance[currentNode->getID()] + road.gettime();
-                if (newDistance < distance[road.getconex()]) {
+                double tiempoArista = calctime(peso, road.getspeed()) * road.gettime();
+                    if (distance[currentNode->getID()] != numeric_limits<double>::infinity() && distance[currentNode->getID()] + tiempoArista< distance[road.getconex()]) {
                     cerr << "El grafo contiene ciclos negativos." << endl;
                     return;
                 }
@@ -49,6 +53,20 @@ void bellmanFord(int sourceID, int destinationID, int peso) {
 
         cout << "La distancia más corta desde el nodo " << sourceID << " al nodo " << destinationID
              << " es: " << distance[destinationID] << " unidades de tiempo." << endl;
+        vector<int> camino;
+        for (int nodoActual = destinationID; nodoActual != -1; nodoActual = anterior[nodoActual]) {
+        camino.push_back(nodoActual);
+
+        }
+        reverse(camino.begin(), camino.end());     
+
+        cout << "El camino que mas corto encontrado es: ";
+        for (int nodo : camino) {
+        cout << nodo << " ";
+        }
+             cout << endl;
+        cout<<"ahora se procedera a mostrar la cantidad de tiempo entre cada nodo:"<<endl;
+        timebeetweem(camino,distance,sourceID);
     }
 
     void addNode(node*& node){
@@ -63,6 +81,22 @@ void bellmanFord(int sourceID, int destinationID, int peso) {
     cout<< "no se encontraron los nodos buscado"<<endl;
     return nullptr;
 }
+
+
+
+void timebeetweem(const vector<int>& camino, const vector<double>& distancias, int nodoOrigen) {
+    cout << "Tiempo acumulado entre nodos:" << endl;
+
+    for (size_t i = 1; i < camino.size(); ++i) {
+        int nodoActual = camino[i];
+        double tiempoEntreNodos = distancias[nodoActual] - distancias[nodoOrigen];
+
+        cout << "De " << nodoOrigen << " a " << nodoActual << ": " << tiempoEntreNodos << " segundos." << endl;
+
+        nodoOrigen = nodoActual;
+    }
+}
+
 void addArista(int idnodo1, int idnodo2, int speed, int time){
     node* node1 = findNode(idnodo1);
     node* node2 = findNode(idnodo2);
