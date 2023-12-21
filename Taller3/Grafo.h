@@ -9,6 +9,16 @@ class grafo{
     private:
     vector<node*> nodes;
     public:
+
+   int calctime(int peso,int velocidad){
+        int division = 0;
+        if(peso < velocidad){
+            return 1;
+        }else{
+            division = (peso / velocidad);
+            return (division+1);
+        }
+    }
     
 void bellmanFord(int sourceID, int destinationID) {
         vector<int> distance(nodes.size(), 1000000);
@@ -17,6 +27,7 @@ void bellmanFord(int sourceID, int destinationID) {
         for (int i = 0; i < nodes.size() - 1; ++i) {
             for (node* currentNode : nodes) {
                 for (Arista& road : currentNode->getRoads()) {
+
                     int newDistance = distance[currentNode->getID()] + road.gettime();
                     if (newDistance < distance[road.getconex()]) {
                         distance[road.getconex()] = newDistance;
