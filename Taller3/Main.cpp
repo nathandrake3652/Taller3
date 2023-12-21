@@ -104,14 +104,40 @@ int main() {
     fillVector(nodos);
     Rellenar(Grafo, nodos);
     conectRoads(Grafo);
-
-    int sourceID, destinationID;
-    cout << "Ingrese el ID del nodo de partida: ";
+    bool system = true;
+    cout<<"Bienvenido"<<endl;
+    while(system){
+        cout<<"---Menu---"<<endl;
+    int sourceID, destinationID, peso;
+    cout << "Ingrese el ID del nodo de partida: "<<endl;
     cin >> sourceID;    
-    cout << "Ingrese el ID del nodo de destino: ";
+    cout << "Ingrese el ID del nodo de destino: "<<endl;
     cin >> destinationID;
+    cout<< "Ingrese el peso del archivo que desea enviar: "<<endl;
+    cin>> peso;
+    Grafo.bellmanFord(sourceID, destinationID,peso);
+    cout<<" ¿Desea enviar otro archivo?"<<endl;
+    cout<<"1.Si"<<endl<<"2.No"<<endl;
+    cout<<"Ingrese su opcion de manera numerica:";
+    try{
+        int eleccion;
+        cin>>eleccion;
+        if(eleccion =1){
+            system = true;
+        }
+        else if(eleccion =2){
+            system = false;
+        }
+    }   
+    catch (const invalid_argument& e){
+        cerr<<"Argumento invalido por favor intentelo de nuevo";
 
-    Grafo.bellmanFord(sourceID, destinationID);
+    };
+
+    
+    }
+
+
 
 
     return 0;

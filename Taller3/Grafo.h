@@ -20,7 +20,7 @@ class grafo{
         }
     }
     
-void bellmanFord(int sourceID, int destinationID) {
+void bellmanFord(int sourceID, int destinationID, int peso) {
         vector<int> distance(nodes.size(), 1000000);
         distance[sourceID] = 0;
 
